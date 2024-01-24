@@ -10,7 +10,7 @@ CREATE TABLE users(
 	name VARCHAR(50) NOT NULL,
 	email VARCHAR(50) NOT NULL,
 	password VARCHAR(50) NOT NULL,
-	number BIGINT NOT NULL,
+	number VARCHAR NOT NULL,
 	address VARCHAR(50) NOT NULL,
 	role role_type NOT NULL,
 	balance BIGINT,

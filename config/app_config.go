@@ -4,11 +4,26 @@ const(
 	ApiGroup = "/api/v1"
 
 	// user
+	UserCreate = "/user" 
+	UserUpdate = "/user" 
+	UserList = "/user" 
+	UserGetById = "/user/:id" 
+	UserDelete = "/user/:id" 
+	UserGetByEmail = "/user/email/:email"
 	
-	// merchant
-
 	// auth
+	AuthLogin = "/login"
+	AuthLogout = "/logout"
+
+	// merchant
+	MerchantCreate = "/merchant" 
+	MerchantUpdate = "/merchant" 
+	MerchantList = "/merchant" 
+	MerchantGetById = "/merchant/:id" 
+	MerchantDelete = "/merchant/:id" 
 	
 	// transaction
-
+	HistoryCreate = "/history"
+	HistoryList = "/history"
+	HistoryGetById = "/history/:id"
 )

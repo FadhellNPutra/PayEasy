@@ -2,7 +2,7 @@ CREATE DATABASE IF NOT EXISTS 'payeasy';
 CREATE EXTENSION IF NOT EXISTS 'uuid-ossp';
 CREATE EXTENSION IF NOT EXISTS pgcrypto;
 
-CREATE TYPE role_type AS ENUM ('customer', 'merchant');
+CREATE TYPE role_type AS ENUM ('customer', 'merchant', 'admin');
 CREATE TYPE status_type AS ENUM ('credit', 'debit');
 
 CREATE TABLE users(

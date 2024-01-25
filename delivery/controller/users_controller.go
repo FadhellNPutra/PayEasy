@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/http"
 	"payeasy/config"
+	"payeasy/delivery/middleware"
 	"payeasy/entity"
 	"payeasy/shared/common"
 	"payeasy/usecase"
@@ -15,9 +16,9 @@ import (
 )
 
 type UsersController struct {
-	usersUC usecase.UsersUseCase
-	rg      *gin.RouterGroup
-	// authMiddleware middleware.AuthMiddleware
+	usersUC        usecase.UsersUseCase
+	rg             *gin.RouterGroup
+	authMiddleware middleware.AuthMiddleware
 }
 
 func (u *UsersController) createHandler(ctx *gin.Context) {
@@ -46,7 +47,7 @@ func (u *UsersController) deleteHandler(ctx *gin.Context) {
 
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
-			common.SendErrorResponse(ctx, http.StatusNotFound, "Employee with ID "+id+" not found. Delete data failed")
+			common.SendErrorResponse(ctx, http.StatusNotFound, "Users with ID "+id+" not found. Delete data failed")
 		} else {
 			common.SendErrorResponse(ctx, http.StatusInternalServerError, err.Error())
 		}
@@ -102,7 +103,7 @@ func (u *UsersController) ListHandler(ctx *gin.Context) {
 	page, _ := strconv.Atoi(ctx.DefaultQuery("page", "1"))
 	size, _ := strconv.Atoi(ctx.DefaultQuery("size", "5"))
 
-	employees, paging, err := u.usersUC.ListAll(page, size)
+	users, paging, err := u.usersUC.ListAll(page, size)
 	if err != nil {
 		common.SendErrorResponse(ctx, http.StatusInternalServerError, err.Error())
 		return
@@ -110,7 +111,7 @@ func (u *UsersController) ListHandler(ctx *gin.Context) {
 
 	var response []interface{}
 
-	for _, v := range employees {
+	for _, v := range users {
 		response = append(response, v)
 	}
 	common.SendPagedResponse(ctx, response, paging, "Ok")
@@ -118,18 +119,18 @@ func (u *UsersController) ListHandler(ctx *gin.Context) {
 
 // route
 func (u *UsersController) Route() {
-	u.rg.GET(config.UserGetById, /*u.authMiddleware.RequireToken("customer", "merchant"),*/ u.getByIdHandler)
-	u.rg.GET(config.UserGetByEmail, /*u.authMiddleware.RequireToken("customer", "merchant"),*/ u.getByEmailHandler)
-	u.rg.POST(config.UserCreate, /*u.authMiddleware.RequireToken("customer", "merchant"),*/ u.createHandler)
-	u.rg.PUT(config.UserUpdate, /*u.authMiddleware.RequireToken("customer", "merchant"),*/ u.putHandler)
-	u.rg.GET(config.UserList, /*u.authMiddleware.RequireToken("customer", "merchant"),*/ u.ListHandler)
-	u.rg.DELETE(config.UserDelete, /*u.authMiddleware.RequireToken("customer", "merchant"),*/ u.deleteHandler)
+	u.rg.GET(config.UserGetById, u.authMiddleware.RequireToken("customer", "merchant", "admin"), u.getByIdHandler)
+	u.rg.GET(config.UserGetByEmail, u.authMiddleware.RequireToken("customer", "merchant", "admin"), u.getByEmailHandler)
+	u.rg.POST(config.UserCreate, u.authMiddleware.RequireToken("customer", "merchant", "admin"), u.createHandler)
+	u.rg.PUT(config.UserUpdate, u.authMiddleware.RequireToken("customer", "merchant", "admin"), u.putHandler)
+	u.rg.GET(config.UserList, u.authMiddleware.RequireToken("customer", "merchant", "admin"), u.ListHandler)
+	u.rg.DELETE(config.UserDelete, u.authMiddleware.RequireToken("customer", "merchant", "admin"), u.deleteHandler)
 }
 
-func NewUsersController(usersUC usecase.UsersUseCase, rg *gin.RouterGroup /*, authMiddleware middleware.AuthMiddleware*/) *UsersController {
+func NewUsersController(usersUC usecase.UsersUseCase, rg *gin.RouterGroup, authMiddleware middleware.AuthMiddleware) *UsersController {
 	return &UsersController{
-		usersUC: usersUC,
-		rg:         rg,
-		// authMiddleware: authMiddleware,
+		usersUC:        usersUC,
+		rg:             rg,
+		authMiddleware: authMiddleware,
 	}
 }

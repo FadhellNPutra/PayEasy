@@ -6,7 +6,7 @@ const(
 	SelectAllUser = "SELECT id, name, email, password, number, address, role, balance, created_at, updated_at FROM users LIMIT $1 OFFSET $2"
 	SelectUserById = "SELECT id, name, email, password, number, address, role, balance, created_at, updated_at FROM users WHERE id = $1"
 	SelectUserByEmail = "SELECT id, name, email, password, number, address, role, balance, created_at, updated_at FROM users WHERE email = $1"
-	SelectUserForLogin = "SELECT id, name, email, password, number, address, role, balance, created_at, updated_at FROM users WHERE email = $1 AND password = $2"
+	SelectUserForLogin = "SELECT id, name, email, password, role FROM users WHERE email = $1 AND password = crypt($2, password)"
 	UpdateUser = "UPDATE users SET name = $1, email = $2, password = crypt($3, password), number = $4, address = $5, role = $6, balance = $7, updated_at = CURRENT_TIMESTAMP  WHERE id = $8 RETURNING created_at, updated_at"
 	DeleteUser = "DELETE FROM users WHERE id = $1"
 	

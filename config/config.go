@@ -38,10 +38,20 @@ func (c *Config) ConfigConfiguration() error {
 		Name:     os.Getenv("DB_NAME"),
 		Driver:   os.Getenv("DB_DRIVER"),
 	}
+	
+	c.ApiConfig = ApiConfig{ApiPort: os.Getenv("API_PORT")}
 
 	if c.Host == "" || c.Port == "" || c.User == "" || c.Name == "" || c.Driver == "" || c.ApiPort == "" {
 		return fmt.Errorf("missing required environment")
 	}
 
 	return nil
+}
+
+func NewConfig() (*Config, error) {
+	cfg := &Config{}
+	if err := cfg.ConfigConfiguration(); err != nil {
+		return nil, err
+	}
+	return cfg, nil
 }

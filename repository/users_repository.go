@@ -76,7 +76,10 @@ func (u *usersRepository) GetUsersByEmail(email string) (entity.Users, error) {
 		&users.Name,
 		&users.Email,
 		&users.Password,
+		&users.Number,
+		&users.Address,
 		&users.Role,
+		&users.Balance,
 		&users.CreatedAt,
 		&users.UpdatedAt)
 	if err != nil {
@@ -89,16 +92,19 @@ func (u *usersRepository) GetUsersByEmail(email string) (entity.Users, error) {
 // GetUsersById implements UsersRepository.
 func (u *usersRepository) GetUsersById(id string) (entity.Users, error) {
 	var users entity.Users
-	err := u.db.QueryRow(config.SelectUserByEmail, id).Scan(
+	err := u.db.QueryRow(config.SelectUserById, id).Scan(
 		&users.ID,
 		&users.Name,
 		&users.Email,
 		&users.Password,
+		&users.Number,
+		&users.Address,
 		&users.Role,
+		&users.Balance,
 		&users.CreatedAt,
 		&users.UpdatedAt)
 	if err != nil {
-		log.Println("employeeRepository.GetUsersByID.QueryRow: ", err.Error())
+		log.Println("usersRepository.GetUsersByID.QueryRow: ", err.Error())
 		return entity.Users{}, err
 	}
 	return users, nil
@@ -114,7 +120,7 @@ func (u *usersRepository) GetUsersForLogin(email string, password string) (entit
 		&users.Password,
 		&users.Role)
 	if err != nil {
-		log.Println("employeeRepository.GetUsersForLogin.QueryRow: ", err.Error())
+		log.Println("usersRepository.GetUsersForLogin.QueryRow: ", err.Error())
 		return entity.Users{}, err
 	}
 	return users, nil
@@ -136,6 +142,8 @@ func (u *usersRepository) List(page int, size int) ([]entity.Users, model.Paging
 			&user.Name,
 			&user.Email,
 			&user.Password,
+			&user.Number,
+			&user.Address,
 			&user.Role,
 			&user.Balance,
 			&user.CreatedAt,
@@ -150,7 +158,7 @@ func (u *usersRepository) List(page int, size int) ([]entity.Users, model.Paging
 	}
 
 	totalRows := 0
-	if err := u.db.QueryRow("SELECT COUNT(*) FROM employees").Scan(&totalRows); err != nil {
+	if err := u.db.QueryRow("SELECT COUNT(*) FROM users").Scan(&totalRows); err != nil {
 		return nil, model.Paging{}, err
 	}
 
@@ -197,6 +205,6 @@ func (u *usersRepository) UpdateUsers(payload entity.Users) (entity.Users, error
 	return users, nil
 }
 
-func NewEmployeeRepository(db *sql.DB) UsersRepository {
+func NewUsersRepository(db *sql.DB) UsersRepository {
 	return &usersRepository{db: db}
 }

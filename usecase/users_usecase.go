@@ -16,6 +16,7 @@ type UsersUseCase interface {
 	RegisterNewUsers(payload entity.Users) (entity.Users, error)
 	UpdateUsers(payload entity.Users) (entity.Users, error)
 	ListAll(page, size int) ([]entity.Users, model.Paging, error)
+	DeleteUsers(id string) error
 }
 
 type usersUseCase struct {
@@ -27,12 +28,20 @@ type usersUseCase struct {
 // 	return u.repo.GetUsersForLogin(email, password)
 // }
 
+func (u *usersUseCase) DeleteUsers(id string) error {
+	if _, err := u.repo.GetUsersById(id); err != nil {
+		return err
+	}
+
+	return u.repo.DeleteUser(id)
+}
+
 // FindUsersByID implements UsersUseCase.
 func (u *usersUseCase) FindUsersByID(id string) (entity.Users, error) {
 	if id == "" {
 		return entity.Users{}, errors.New("id harus diisi")
 	}
-	return u.repo.GetUsersByEmail(id)
+	return u.repo.GetUsersById(id)
 }
 
 // FindUsersByUsername implements UsersUseCase.
@@ -82,6 +91,6 @@ func (u *usersUseCase) UpdateUsers(payload entity.Users) (entity.Users, error) {
 	return users, nil
 }
 
-func (u *usersUseCase) NewUsersUseCase(repo repository.UsersRepository) UsersUseCase {
+func NewUsersUseCase(repo repository.UsersRepository) UsersUseCase {
 	return &usersUseCase{repo: repo}
 }

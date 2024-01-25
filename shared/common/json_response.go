@@ -33,6 +33,13 @@ func SendErrorResponse(c *gin.Context, code int, message string) {
 		Message: message,
 	})
 }
+func SendDeletedResponse(c *gin.Context, message string) {
+	c.JSON(http.StatusOK, &model.Status{
+		Code:    http.StatusOK,
+		Message: message,
+	},
+	)
+}
 
 func SendNoContentResponse(c *gin.Context) {
 	c.JSON(http.StatusNoContent, nil)

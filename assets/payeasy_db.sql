@@ -21,9 +21,7 @@ CREATE TABLE users(
 CREATE TABLE merchants(
 	id uuid_generate_v4() NOT NULL,
 	name_merchants VARCHAR(50) NOT NULL,
-	id_users uuid NOT NULL,
 	balance BIGINT,
-	FOREIGN KEY (id_users) REFERENCES users(id),
 	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP
 );

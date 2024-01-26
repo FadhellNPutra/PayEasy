@@ -109,6 +109,16 @@ func (u *usersRepository) GetUsersById(id string) (entity.Users, error) {
 	}
 	return users, nil
 }
+func (u *usersRepository) GetUsersOnlyId(id string) (entity.Users, error) {
+	var users entity.Users
+	err := u.db.QueryRow(config.SelectUserOnlyId, id).Scan(
+		&users.ID)
+	if err != nil {
+		log.Println("usersRepository.GetUsersByID.QueryRow: ", err.Error())
+		return entity.Users{}, err
+	}
+	return users, nil
+}
 
 // GetUsersForLogin implements UsersRepository.
 func (u *usersRepository) GetUsersForLogin(email string, password string) (entity.Users, error) {

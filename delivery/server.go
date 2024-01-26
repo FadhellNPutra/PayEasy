@@ -16,7 +16,7 @@ import (
 )
 
 type Server struct {
-	// roomUC         usecase.RoomUseCase
+	merchantUC         usecase.MerchantUseCase
 	// facilitiesUC   usecase.FacilitiesUseCase
 	usersUC usecase.UsersUseCase
 	// roomFacilityUc usecase.RoomFacilityUsecase
@@ -32,7 +32,7 @@ func (s *Server) initRoute() {
 	rg := s.engine.Group(config.ApiGroup)
 
 	authMiddleware := middleware.NewAuthMiddleware(s.jwtService)
-	// controller.NewRoomController(s.roomUC, authMiddleware, rg).Route()
+	controller.NewMerchantController(s.merchantUC, rg, authMiddleware).Route()
 	// controller.NewFacilitiesController(s.facilitiesUC, rg, authMiddleware).Route()
 	controller.NewUsersController(s.usersUC, rg, authMiddleware).Route()
 	// controller.NewRoomFacilityController(s.roomFacilityUc, rg, authMiddleware).Route()
@@ -58,7 +58,7 @@ func NewServer() *Server {
 	}
 
 	// Inject DB ke -> repository
-	// roomRepo := repository.NewRoomRepository(db)
+	merchantRepo := repository.NewMerchantRepository(db)
 	// facilityRepo := repository.NewFasilitesRepository(db)
 	usersRepo := repository.NewUsersRepository(db)
 	// roomFacilityRepo := repository.NewRoomFacilityRepository(db)
@@ -66,7 +66,7 @@ func NewServer() *Server {
 	// reportRepo := repository.NewReportRepository(db)
 
 	// Inject REPO ke -> useCase
-	// roomUC := usecase.NewRoomUseCase(roomRepo)
+	merchantUC := usecase.NewMerchantUseCase(merchantRepo)
 	// facilitiesUC := usecase.NewFacilitiesUseCase(facilityRepo)
 	usersUC := usecase.NewUsersUseCase(usersRepo)
 	// roomFacilityUc := usecase.NewRoomFacilityUsecase(roomFacilityRepo)
@@ -80,7 +80,7 @@ func NewServer() *Server {
 
 	return &Server{
 		authUsc: authUc,
-		// roomUC:         roomUC,
+		merchantUC:         merchantUC,
 		// facilitiesUC:   facilitiesUC,
 		usersUC: usersUC,
 		// transactionsUc: transactionsUc,

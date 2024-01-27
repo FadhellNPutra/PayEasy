@@ -43,7 +43,7 @@ func (m *merchantUseCase) ListAll(page int, size int) ([]entity.Merchant, model.
 
 // RegisterNewMerchant implements MerchantUseCase.
 func (m *merchantUseCase) RegisterNewMerchant(payload entity.Merchant) (entity.Merchant, error) {
-	if payload.NameMerchant == "" || payload.IdUsers == "" || payload.Balance == 0 {
+	if payload.NameMerchant == "" ||  payload.Balance == 0 {
 		return entity.Merchant{}, fmt.Errorf("oops, field required")
 	}
 
@@ -56,7 +56,7 @@ func (m *merchantUseCase) RegisterNewMerchant(payload entity.Merchant) (entity.M
 
 // UpdateMerchant implements MerchantUseCase.
 func (m *merchantUseCase) UpdateMerchant(payload entity.Merchant) (entity.Merchant, error) {
-	if payload.NameMerchant == "" || payload.IdUsers == "" || payload.Balance == 0 || payload.Id == "" {
+	if payload.NameMerchant == "" || payload.Balance == 0 || payload.Id == "" {
 		return entity.Merchant{}, fmt.Errorf("oops, field required")
 	}
 

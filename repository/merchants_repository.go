@@ -16,6 +16,7 @@ type MerchantRepository interface {
 	GetMerchantById(id string) (entity.Merchant, error)
 	UpdateMerchant(payload entity.Merchant) (entity.Merchant, error)
 	DeleteMerchant(id string) error
+
 }
 
 type merchantRepository struct {
@@ -30,7 +31,6 @@ func (m *merchantRepository) CreateMerchant(payload entity.Merchant) (entity.Mer
 
 	err := m.db.QueryRow(config.InsertMerchants,
 		payload.NameMerchant,
-		payload.IdUsers,
 		payload.Balance,
 	).Scan(&merchant.Id, &merchant.CreatedAt, &merchant.UpdatedAt)
 
@@ -40,7 +40,6 @@ func (m *merchantRepository) CreateMerchant(payload entity.Merchant) (entity.Mer
 	}
 
 	merchant.NameMerchant = payload.NameMerchant
-	merchant.IdUsers = payload.IdUsers
 	merchant.Balance = payload.Balance
 
 	return merchant, nil
@@ -64,7 +63,6 @@ func (m *merchantRepository) GetMerchantById(id string) (entity.Merchant, error)
 	err := m.db.QueryRow(config.SelectMerchantsById, id).Scan(
 		&merchant.Id,
 		&merchant.NameMerchant,
-		&merchant.IdUsers,
 		&merchant.Balance,
 		&merchant.CreatedAt,
 		&merchant.UpdatedAt)
@@ -89,7 +87,6 @@ func (m *merchantRepository) ListMerchant(page int, size int) ([]entity.Merchant
 		err := rows.Scan(
 			&merchant.Id,
 			&merchant.NameMerchant,
-			&merchant.IdUsers,
 			&merchant.Balance,
 			&merchant.CreatedAt,
 			&merchant.UpdatedAt,
@@ -124,19 +121,17 @@ func (m *merchantRepository) UpdateMerchant(payload entity.Merchant) (entity.Mer
 
 	err := m.db.QueryRow(config.UpdateMerchants,
 		payload.NameMerchant,
-		payload.IdUsers,
 		payload.Balance,
 		payload.Id,
 	).Scan(&merchant.CreatedAt, &merchant.UpdatedAt)
 
 	if err != nil {
-		log.Println("usersRepository.QueryRow: ", err.Error())
+		log.Println("merchantRepository.QueryRow: ", err.Error())
 		return entity.Merchant{}, err
 	}
 
 	merchant.Id = payload.Id
 	merchant.NameMerchant = payload.NameMerchant
-	merchant.IdUsers = payload.IdUsers
 	merchant.Balance = payload.Balance
 
 	return merchant, nil

@@ -121,7 +121,7 @@ func (u *UsersController) ListHandler(ctx *gin.Context) {
 func (u *UsersController) Route() {
 	u.rg.GET(config.UserGetById, u.authMiddleware.RequireToken("customer", "merchant", "admin"), u.getByIdHandler)
 	u.rg.GET(config.UserGetByEmail, u.authMiddleware.RequireToken("customer", "merchant", "admin"), u.getByEmailHandler)
-	u.rg.POST(config.UserCreate, u.authMiddleware.RequireToken("customer", "merchant", "admin"), u.createHandler)
+	u.rg.POST(config.UserCreate, u.createHandler)
 	u.rg.PUT(config.UserUpdate, u.authMiddleware.RequireToken("customer", "merchant", "admin"), u.putHandler)
 	u.rg.GET(config.UserList, u.authMiddleware.RequireToken("customer", "merchant", "admin"), u.ListHandler)
 	u.rg.DELETE(config.UserDelete, u.authMiddleware.RequireToken("customer", "merchant", "admin"), u.deleteHandler)

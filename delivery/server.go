@@ -16,12 +16,9 @@ import (
 )
 
 type Server struct {
-	merchantUC         usecase.MerchantUseCase
-	// facilitiesUC   usecase.FacilitiesUseCase
-	usersUC usecase.UsersUseCase
-	// roomFacilityUc usecase.RoomFacilityUsecase
-	// transactionsUc usecase.TransactionsUsecase
-	// reportUC       usecase.ReportUseCase
+	merchantUC usecase.MerchantUseCase
+	historyUC  usecase.HistoryUsecase
+	usersUC    usecase.UsersUseCase
 	authUsc    usecase.AuthUseCase
 	engine     *gin.Engine
 	jwtService service.JwtService
@@ -33,12 +30,9 @@ func (s *Server) initRoute() {
 
 	authMiddleware := middleware.NewAuthMiddleware(s.jwtService)
 	controller.NewMerchantController(s.merchantUC, rg, authMiddleware).Route()
-	// controller.NewFacilitiesController(s.facilitiesUC, rg, authMiddleware).Route()
+	controller.NewHistoryController(s.historyUC, rg, authMiddleware).Route()
 	controller.NewUsersController(s.usersUC, rg, authMiddleware).Route()
-	// controller.NewRoomFacilityController(s.roomFacilityUc, rg, authMiddleware).Route()
-	// controller.NewTransactionsController(s.transactionsUc, rg, authMiddleware).Route()
 	controller.NewAuthController(s.authUsc, rg).Route()
-	// controller.NewReportController(s.reportUC, rg, authMiddleware).Route()
 }
 
 func (s *Server) Run() {
@@ -59,33 +53,24 @@ func NewServer() *Server {
 
 	// Inject DB ke -> repository
 	merchantRepo := repository.NewMerchantRepository(db)
-	// facilityRepo := repository.NewFasilitesRepository(db)
+	historyRepo := repository.NewHistoryRepository(db)
 	usersRepo := repository.NewUsersRepository(db)
-	// roomFacilityRepo := repository.NewRoomFacilityRepository(db)
-	// transactionsRepo := repository.NewTransactionsRepository(db)
-	// reportRepo := repository.NewReportRepository(db)
 
 	// Inject REPO ke -> useCase
 	merchantUC := usecase.NewMerchantUseCase(merchantRepo)
-	// facilitiesUC := usecase.NewFacilitiesUseCase(facilityRepo)
+	historyUC := usecase.NewHistoryUsecase(historyRepo)
 	usersUC := usecase.NewUsersUseCase(usersRepo)
-	// roomFacilityUc := usecase.NewRoomFacilityUsecase(roomFacilityRepo)
-	// transactionsUc := usecase.NewTransactionsUsecase(transactionsRepo)
 	jwtService := service.NewJwtService(cfg.TokenConfig)
 	authUc := usecase.NewAuthUseCase(usersUC, jwtService)
-	// reportUC := usecase.NewReportUseCase(reportRepo)
 
 	engine := gin.Default()
 	host := fmt.Sprintf(":%s", cfg.ApiPort)
 
 	return &Server{
-		authUsc: authUc,
-		merchantUC:         merchantUC,
-		// facilitiesUC:   facilitiesUC,
+		authUsc:    authUc,
+		merchantUC: merchantUC,
+		historyUC:   historyUC,
 		usersUC: usersUC,
-		// transactionsUc: transactionsUc,
-		// roomFacilityUc: roomFacilityUc,
-		// reportUC:       reportUC,
 		engine:     engine,
 		jwtService: jwtService,
 		host:       host,
